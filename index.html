@@ -50,7 +50,8 @@
         
         input[type="text"],
         input[type="tel"],
-        input[type="email"] {
+        input[type="email"],
+        input[type="file"] {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e1e1e1;
@@ -61,9 +62,23 @@
         
         input[type="text"]:focus,
         input[type="tel"]:focus,
-        input[type="email"]:focus {
+        input[type="email"]:focus,
+        input[type="file"]:focus {
             outline: none;
             border-color: #667eea;
+        }
+        
+        input[type="file"] {
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+        
+        .file-note {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 12px;
+            font-style: italic;
         }
         
         .btn-group {
@@ -146,6 +161,24 @@
                 <input type="email" id="contactEmail" name="contactEmail" required>
             </div>
             
+            <div class="form-group">
+                <label for="cioUpload">Upload your CIO (must be PDF):</label>
+                <input type="file" id="cioUpload" name="cioUpload" accept=".pdf" required>
+                <small class="file-note">Only PDF files are accepted</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="rfdsUpload">Upload your RFDS (Excel or PDF):</label>
+                <input type="file" id="rfdsUpload" name="rfdsUpload" accept=".pdf,.xlsx,.xls" required>
+                <small class="file-note">PDF, Excel (.xlsx, .xls) files accepted</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="coloUpload">Upload your Colo Application (Excel or PDF):</label>
+                <input type="file" id="coloUpload" name="coloUpload" accept=".pdf,.xlsx,.xls" required>
+                <small class="file-note">PDF, Excel (.xlsx, .xls) files accepted</small>
+            </div>
+            
             <div class="btn-group">
                 <button type="submit" class="btn-submit">Submit</button>
                 <button type="button" class="btn-clear" onclick="clearForm()">Clear</button>
@@ -158,6 +191,11 @@
             <p><strong>Contact:</strong> <span id="displayName"></span></p>
             <p><strong>Phone:</strong> <span id="displayPhone"></span></p>
             <p><strong>Email:</strong> <span id="displayEmail"></span></p>
+            <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
+            <h4 style="margin-bottom: 10px; color: #333;">Uploaded Files:</h4>
+            <p><strong>CIO:</strong> <span id="displayCio"></span></p>
+            <p><strong>RFDS:</strong> <span id="displayRfds"></span></p>
+            <p><strong>Colo Application:</strong> <span id="displayColo"></span></p>
         </div>
     </div>
 
@@ -172,11 +210,21 @@
             const contactPhone = document.getElementById('contactPhone').value;
             const contactEmail = document.getElementById('contactEmail').value;
             
+            // Get file uploads
+            const cioFile = document.getElementById('cioUpload').files[0];
+            const rfdsFile = document.getElementById('rfdsUpload').files[0];
+            const coloFile = document.getElementById('coloUpload').files[0];
+            
             // Display the results
             document.getElementById('displayCompany').textContent = companyName;
             document.getElementById('displayName').textContent = contactName;
             document.getElementById('displayPhone').textContent = contactPhone;
             document.getElementById('displayEmail').textContent = contactEmail;
+            
+            // Display file information
+            document.getElementById('displayCio').textContent = cioFile ? cioFile.name : 'No file selected';
+            document.getElementById('displayRfds').textContent = rfdsFile ? rfdsFile.name : 'No file selected';
+            document.getElementById('displayColo').textContent = coloFile ? coloFile.name : 'No file selected';
             
             // Show the result div
             document.getElementById('result').style.display = 'block';
@@ -186,7 +234,12 @@
                 company: companyName,
                 name: contactName,
                 phone: contactPhone,
-                email: contactEmail
+                email: contactEmail,
+                files: {
+                    cio: cioFile ? cioFile.name : null,
+                    rfds: rfdsFile ? rfdsFile.name : null,
+                    colo: coloFile ? coloFile.name : null
+                }
             });
         });
         
