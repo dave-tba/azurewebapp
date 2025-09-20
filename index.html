@@ -539,6 +539,66 @@
                 </div>
             </div>
             
+            <!-- NTP Requirements Section (Tower Projects Only) -->
+            <div id="ntpRequirementsSection" class="section project-sections">
+                <h2 class="section-title">NTP Requirements</h2>
+                
+                <div style="background-color: white; padding: 20px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #dc2626;">
+                    <p style="margin-bottom: 15px;">It is the <strong>General Contractor's (GC's) responsibility</strong> to ensure that all required FAA documentation is filed, accurate, and specific to the project <strong>before</strong> an NTP can be issued and any work begins.</p>
+                    
+                    <p style="margin-bottom: 15px; color: #dc2626; font-weight: 600;"><strong>Failure to file for FAA Determination when required</strong> can result in <strong>stop-work orders, fines</strong>, or <strong>liability for non-compliance</strong> with federal law.</p>
+                    
+                    <h4 style="color: #1e40af; margin: 20px 0 10px 0; font-weight: 600;">Local / Municipal Permits</h4>
+                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                        <li>May be required, even if FAA is not</li>
+                        <li>Some cities and counties require a <strong>crane operation permit</strong> regardless of FAA filing.</li>
+                    </ul>
+                    
+                    <h4 style="color: #1e40af; margin: 20px 0 10px 0; font-weight: 600;">Department of Transportation (DOT) Permits</h4>
+                    <p style="margin-bottom: 10px;">May also apply:</p>
+                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                        <li>If your crane, hoist, or transport equipment will operate in or obstruct any public roadways, DOT clearance or permits may be required.</li>
+                        <li>It is the GC's responsibility to check with local and state DOT offices and obtain any required permits or approvals.</li>
+                    </ul>
+                    
+                    <h4 style="color: #1e40af; margin: 20px 0 10px 0; font-weight: 600;">Notice of Proposed Construction or Alteration</h4>
+                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                        <li>Per FAA and FCC regulations, submission of FAA Form 7460-1 (Notice of Proposed Construction or Alteration) is mandatory when equipment exceeds tower structure</li>
+                    </ul>
+                    
+                    <h4 style="color: #1e40af; margin: 20px 0 10px 0; font-weight: 600;">Crane Use</h4>
+                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                        <li>Building permits or right-of-way permits may be necessary if the crane setup impacts traffic, sidewalks, or public areas</li>
+                        <li><strong>FAA Determination</strong> is required for any crane that exceeds the tower structure.</li>
+                        <li>The GC will be responsible for obtaining the FAA Determination for this specific project and submitting the determination letter as part of the NTP requirements.</li>
+                        <li>If already filed, please submit the FAA Determination Letter specific to this project.</li>
+                        <li>All FAA Determination filed by Tillman are specific to the construction of Tillman's tower structures and may not be used for any other project(s).</li>
+                    </ul>
+                    
+                    <h4 style="color: #1e40af; margin: 20px 0 10px 0; font-weight: 600;">If a crane is not being used</h4>
+                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                        <li>The contractor must still provide a rigging plan, or any hoist mechanism plans for Safety to review and approve</li>
+                    </ul>
+                </div>
+                
+                <div class="form-group" style="background-color: #fef3c7; padding: 15px; border-radius: 5px; border: 2px solid #f59e0b;">
+                    <div style="display: flex; align-items: flex-start; gap: 10px;">
+                        <input type="checkbox" id="ntpAgreement" name="ntpAgreement" required style="margin-top: 5px; width: auto;">
+                        <div style="flex: 1;">
+                            <label for="ntpAgreement" style="margin: 0; font-weight: 600; color: #92400e;">
+                                I have read and agree to the NTP Requirements above <span class="required">*</span>
+                            </label>
+                            <div style="margin-top: 10px;">
+                                <label for="ntpInitials" style="font-weight: 500; color: #374151;">Enter your initials to confirm agreement:</label>
+                                <input type="text" id="ntpInitials" name="ntpInitials" required 
+                                       style="width: 100px; margin-top: 5px; text-transform: uppercase;" 
+                                       placeholder="ABC" maxlength="10">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="btn-group">
                 <button type="submit" class="btn-submit" id="submitBtn" disabled>Submit NTP Request</button>
                 <button type="button" class="btn-clear" onclick="clearForm()">Clear Form</button>
@@ -557,21 +617,28 @@
             const projectTypeRadios = document.querySelectorAll('input[name="projectType"]');
             const civilSection = document.getElementById('civilRequirements');
             const towerSection = document.getElementById('towerRequirements');
+            const ntpRequirementsSection = document.getElementById('ntpRequirementsSection');
             
             projectTypeRadios.forEach(radio => {
                 radio.addEventListener('change', function() {
                     if (this.value === 'civil') {
                         civilSection.classList.add('active');
                         towerSection.classList.remove('active');
+                        ntpRequirementsSection.classList.remove('active');
                         // Set tower fields as not required
                         setRequiredFields('tower', false);
                         setRequiredFields('civil', true);
+                        // NTP requirements not required for civil
+                        setNtpRequirementsRequired(false);
                     } else if (this.value === 'tower') {
                         towerSection.classList.add('active');
                         civilSection.classList.remove('active');
+                        ntpRequirementsSection.classList.add('active');
                         // Set civil fields as not required
                         setRequiredFields('civil', false);
                         setRequiredFields('tower', true);
+                        // NTP requirements required for tower
+                        setNtpRequirementsRequired(true);
                     }
                     checkFormValidity();
                 });
@@ -583,6 +650,14 @@
             // Add change listeners to all form elements
             addFormListeners();
         });
+        
+        function setNtpRequirementsRequired(required) {
+            const ntpAgreement = document.getElementById('ntpAgreement');
+            const ntpInitials = document.getElementById('ntpInitials');
+            
+            if (ntpAgreement) ntpAgreement.required = required;
+            if (ntpInitials) ntpInitials.required = required;
+        }
         
         function setRequiredFields(type, required) {
             const prefix = type === 'civil' ? 'civil' : 'tower';
@@ -659,19 +734,40 @@
             // Check if all required fields are filled
             const requiredFields = form.querySelectorAll('input[required], select[required], textarea[required]');
             let allValid = true;
+            let missingField = '';
             
             requiredFields.forEach(field => {
                 if (!field.value.trim() || (field.type === 'file' && field.files.length === 0)) {
                     allValid = false;
+                    if (!missingField) {
+                        if (field.type === 'checkbox' && field.id === 'ntpAgreement') {
+                            missingField = 'NTP Requirements agreement';
+                        } else if (field.id === 'ntpInitials') {
+                            missingField = 'initials for NTP agreement';
+                        } else {
+                            missingField = 'required fields';
+                        }
+                    }
                 }
             });
+            
+            // Special check for tower projects - ensure NTP requirements are acknowledged
+            if (projectType.value === 'tower') {
+                const ntpAgreement = document.getElementById('ntpAgreement');
+                const ntpInitials = document.getElementById('ntpInitials');
+                
+                if (!ntpAgreement.checked || !ntpInitials.value.trim()) {
+                    allValid = false;
+                    missingField = 'NTP Requirements agreement and initials';
+                }
+            }
             
             if (allValid) {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit NTP Request';
             } else {
                 submitBtn.disabled = true;
-                submitBtn.textContent = 'Submit NTP Request (Complete required fields)';
+                submitBtn.textContent = `Submit NTP Request (Complete ${missingField})`;
             }
         }
         
@@ -741,6 +837,15 @@
             resultHtml += `<p><strong>End Date:</strong> ${formData.get(`${prefix}EndDate`)}</p>`;
             resultHtml += '</div>';
             
+            // NTP Requirements Acknowledgment (Tower projects only)
+            if (projectType === 'tower') {
+                resultHtml += '<div class="result-section">';
+                resultHtml += '<h4>NTP Requirements Acknowledgment</h4>';
+                resultHtml += `<p><strong>Agreement:</strong> ✓ Read and agreed to NTP Requirements</p>`;
+                resultHtml += `<p><strong>Initials:</strong> ${formData.get('ntpInitials')}</p>`;
+                resultHtml += '</div>';
+            }
+            
             resultContent.innerHTML = resultHtml;
             result.style.display = 'block';
             
@@ -762,6 +867,9 @@
                 input.disabled = false;
                 input.style.opacity = '1';
             });
+            
+            // Reset NTP requirements
+            setNtpRequirementsRequired(false);
             
             checkFormValidity();
         }
