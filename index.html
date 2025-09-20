@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demo Azure Static Web</title>
+    <title>NTP Request Form - Tillman Infrastructure</title>
     <style>
         * {
             box-sizing: border-box;
@@ -15,9 +15,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #e5e7eb 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
         
@@ -26,21 +23,56 @@
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 15px 35px rgba(30, 58, 138, 0.15);
-            width: 100%;
-            max-width: 500px;
+            max-width: 800px;
+            margin: 0 auto;
             border-top: 4px solid #1e40af;
         }
         
         h1 {
             text-align: center;
             color: #1e40af;
-            margin-bottom: 30px;
-            font-size: 24px;
+            margin-bottom: 10px;
+            font-size: 28px;
             font-weight: 600;
         }
         
-        .form-group {
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .section {
+            margin-bottom: 35px;
+            padding: 25px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background-color: #f9fafb;
+        }
+        
+        .section-title {
+            color: #1e40af;
+            font-size: 20px;
+            font-weight: 600;
             margin-bottom: 20px;
+            border-bottom: 2px solid #1e40af;
+            padding-bottom: 8px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            flex: 1;
+            margin-bottom: 20px;
+        }
+        
+        .form-group.full-width {
+            flex: 100%;
         }
         
         label {
@@ -50,10 +82,17 @@
             font-weight: 500;
         }
         
+        .required {
+            color: #dc2626;
+        }
+        
         input[type="text"],
-        input[type="tel"],
         input[type="email"],
-        input[type="file"] {
+        input[type="tel"],
+        input[type="date"],
+        input[type="file"],
+        select,
+        textarea {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #d1d5db;
@@ -62,10 +101,9 @@
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
         
-        input[type="text"]:focus,
-        input[type="tel"]:focus,
-        input[type="email"]:focus,
-        input[type="file"]:focus {
+        input:focus,
+        select:focus,
+        textarea:focus {
             outline: none;
             border-color: #2563eb;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -74,6 +112,7 @@
         input[type="file"] {
             background-color: #f9fafb;
             cursor: pointer;
+            padding: 8px 12px;
         }
         
         .file-note {
@@ -84,15 +123,69 @@
             font-style: italic;
         }
         
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 8px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .radio-option input[type="radio"] {
+            width: auto;
+            margin: 0;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+        
+        .project-sections {
+            display: none;
+        }
+        
+        .project-sections.active {
+            display: block;
+        }
+        
+        .na-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .na-option input[type="checkbox"] {
+            width: auto;
+        }
+        
+        .na-option label {
+            margin: 0;
+            font-weight: normal;
+            color: #6b7280;
+        }
+        
         .btn-group {
             display: flex;
-            gap: 10px;
-            margin-top: 30px;
+            gap: 15px;
+            margin-top: 40px;
+            justify-content: center;
         }
         
         button {
-            flex: 1;
-            padding: 12px 20px;
+            padding: 12px 30px;
             border: none;
             border-radius: 5px;
             font-size: 16px;
@@ -132,187 +225,546 @@
         }
         
         .result {
-            margin-top: 20px;
-            padding: 15px;
+            margin-top: 30px;
+            padding: 20px;
             background-color: #f8fafc;
-            border-radius: 5px;
+            border-radius: 8px;
             border-left: 4px solid #1e40af;
             display: none;
         }
         
         .result h3 {
             color: #1e40af;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         
-        .result h4 {
+        .result-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 5px;
+        }
+        
+        .result-section h4 {
             color: #374151;
             margin-bottom: 10px;
+            font-size: 16px;
         }
         
         .result p {
             color: #4b5563;
             margin: 5px 0;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Demo Azure Static Web</h1>
+        <h1>NTP Request Form</h1>
+        <p class="subtitle">Tillman Infrastructure - Notice to Proceed Request</p>
         
-        <form id="contactForm">
-            <div class="form-group">
-                <label for="companyName">Company Name:</label>
-                <input type="text" id="companyName" name="companyName" required>
+        <form id="ntpForm">
+            <!-- Basic Information Section -->
+            <div class="section">
+                <h2 class="section-title">Basic Information</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name <span class="required">*</span></label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name <span class="required">*</span></label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="company">Company <span class="required">*</span></label>
+                        <input type="text" id="company" name="company" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="carrier">Carrier <span class="required">*</span></label>
+                        <input type="text" id="carrier" name="carrier" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tillmanProject">Tillman Project # <span class="required">*</span></label>
+                        <input type="text" id="tillmanProject" name="tillmanProject" placeholder="P-010002" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="siteInfo">TI-OPP # or Site Address <span class="required">*</span></label>
+                        <input type="text" id="siteInfo" name="siteInfo" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Project Type <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="civilGround" name="projectType" value="civil" required>
+                            <label for="civilGround">Civil/Ground</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="tower" name="projectType" value="tower" required>
+                            <label for="tower">Tower</label>
+                        </div>
+                    </div>
+                </div>
             </div>
             
-            <div class="form-group">
-                <label for="contactName">Contact Name:</label>
-                <input type="text" id="contactName" name="contactName" required>
+            <!-- Civil/Ground Requirements -->
+            <div id="civilRequirements" class="section project-sections">
+                <h2 class="section-title">Civil/Ground NTP Requirements</h2>
+                
+                <div class="form-group">
+                    <label for="civilSla">Fully Executed SLA/Amendment</label>
+                    <input type="file" id="civilSla" name="civilSla" accept=".pdf">
+                    <small class="file-note">PDF document required</small>
+                    <div class="na-option">
+                        <input type="checkbox" id="civilSlaNa" name="civilSlaNa">
+                        <label for="civilSlaNa">N/A - No amendment required for this project type</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="civilBuildingPermit">Building Permit</label>
+                    <input type="file" id="civilBuildingPermit" name="civilBuildingPermit" accept=".pdf">
+                    <small class="file-note">PDF document or email from jurisdiction</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="civilElectricalPermit">Electrical Permit</label>
+                    <input type="file" id="civilElectricalPermit" name="civilElectricalPermit" accept=".pdf">
+                    <small class="file-note">PDF document or email from jurisdiction</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="civilZoningApproval">Zoning Approval or No Permitting/Zoning Letter</label>
+                    <input type="file" id="civilZoningApproval" name="civilZoningApproval" accept=".pdf">
+                    <small class="file-note">PDF document or email from jurisdiction</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="civilDrawings">Tenant Final Construction Drawings <span class="required">*</span></label>
+                    <input type="file" id="civilDrawings" name="civilDrawings" accept=".pdf" required>
+                    <small class="file-note">PDF document required</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="civilCoi">Construction Contractor Certificate of Insurance (COI) <span class="required">*</span></label>
+                    <input type="file" id="civilCoi" name="civilCoi" accept=".pdf" required>
+                    <small class="file-note">PDF document required</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>GC Contact Information</label>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="civilGcCompany">GC Company <span class="required">*</span></label>
+                            <input type="text" id="civilGcCompany" name="civilGcCompany" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="civilGcFirstName">GC First Name <span class="required">*</span></label>
+                            <input type="text" id="civilGcFirstName" name="civilGcFirstName" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="civilGcLastName">GC Last Name <span class="required">*</span></label>
+                            <input type="text" id="civilGcLastName" name="civilGcLastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="civilGcEmail">GC Email <span class="required">*</span></label>
+                            <input type="email" id="civilGcEmail" name="civilGcEmail" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="civilGcPhone">GC Phone Number <span class="required">*</span></label>
+                        <input type="tel" id="civilGcPhone" name="civilGcPhone" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Construction Schedule</label>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="civilStartDate">CX Start Date <span class="required">*</span></label>
+                            <input type="date" id="civilStartDate" name="civilStartDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="civilEndDate">CX End Date <span class="required">*</span></label>
+                            <input type="date" id="civilEndDate" name="civilEndDate" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="civilSafetyCerts">Safety Certificates <span class="required">*</span></label>
+                    <input type="file" id="civilSafetyCerts" name="civilSafetyCerts" accept=".pdf,.zip" required>
+                    <small class="file-note">PDF or ZIP file accepted</small>
+                </div>
             </div>
             
-            <div class="form-group">
-                <label for="contactPhone">Contact Phone:</label>
-                <input type="tel" id="contactPhone" name="contactPhone" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="contactEmail">Contact Email:</label>
-                <input type="email" id="contactEmail" name="contactEmail" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="coiUpload">Upload your COI (must be PDF):</label>
-                <input type="file" id="coiUpload" name="coiUpload" accept=".pdf" required>
-                <small class="file-note">Only PDF files are accepted</small>
-            </div>
-            
-            <div class="form-group">
-                <label for="rfdsUpload">Upload your RFDS (Excel or PDF):</label>
-                <input type="file" id="rfdsUpload" name="rfdsUpload" accept=".pdf,.xlsx,.xls" required>
-                <small class="file-note">PDF, Excel (.xlsx, .xls) files accepted</small>
-            </div>
-            
-            <div class="form-group">
-                <label for="coloUpload">Upload your Colo Application (Excel or PDF):</label>
-                <input type="file" id="coloUpload" name="coloUpload" accept=".pdf,.xlsx,.xls" required>
-                <small class="file-note">PDF, Excel (.xlsx, .xls) files accepted</small>
+            <!-- Tower Requirements -->
+            <div id="towerRequirements" class="section project-sections">
+                <h2 class="section-title">Tower NTP Requirements</h2>
+                
+                <div class="form-group">
+                    <label for="towerSla">Fully Executed SLA/Amendment</label>
+                    <input type="file" id="towerSla" name="towerSla" accept=".pdf">
+                    <small class="file-note">PDF document required</small>
+                    <div class="na-option">
+                        <input type="checkbox" id="towerSlaNa" name="towerSlaNa">
+                        <label for="towerSlaNa">N/A - No amendment required for this project type</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="towerBuildingPermit">Building Permit</label>
+                    <input type="file" id="towerBuildingPermit" name="towerBuildingPermit" accept=".pdf">
+                    <small class="file-note">PDF document or email from jurisdiction</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="towerElectricalPermit">Electrical Permit</label>
+                    <input type="file" id="towerElectricalPermit" name="towerElectricalPermit" accept=".pdf">
+                    <small class="file-note">PDF document or email from jurisdiction</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="towerZoningApproval">Zoning Approval or No Permitting/Zoning Letter</label>
+                    <input type="file" id="towerZoningApproval" name="towerZoningApproval" accept=".pdf">
+                    <small class="file-note">PDF document or email from jurisdiction</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="towerDrawings">Tenant Final Construction Drawings <span class="required">*</span></label>
+                    <input type="file" id="towerDrawings" name="towerDrawings" accept=".pdf" required>
+                    <small class="file-note">PDF document required</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="towerCoi">Construction Contractor Certificate of Insurance (COI) <span class="required">*</span></label>
+                    <input type="file" id="towerCoi" name="towerCoi" accept=".pdf" required>
+                    <small class="file-note">PDF document required</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>GC Contact Information</label>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="towerGcCompany">GC Company <span class="required">*</span></label>
+                            <input type="text" id="towerGcCompany" name="towerGcCompany" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="towerGcFirstName">GC First Name <span class="required">*</span></label>
+                            <input type="text" id="towerGcFirstName" name="towerGcFirstName" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="towerGcLastName">GC Last Name <span class="required">*</span></label>
+                            <input type="text" id="towerGcLastName" name="towerGcLastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="towerGcEmail">GC Email <span class="required">*</span></label>
+                            <input type="email" id="towerGcEmail" name="towerGcEmail" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="towerGcPhone">GC Phone Number <span class="required">*</span></label>
+                        <input type="tel" id="towerGcPhone" name="towerGcPhone" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Construction Schedule</label>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="towerStartDate">CX Start Date <span class="required">*</span></label>
+                            <input type="date" id="towerStartDate" name="towerStartDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="towerEndDate">CX End Date <span class="required">*</span></label>
+                            <input type="date" id="towerEndDate" name="towerEndDate" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="towerSafetyCerts">Safety Certificates <span class="required">*</span></label>
+                    <input type="file" id="towerSafetyCerts" name="towerSafetyCerts" accept=".pdf,.zip" required>
+                    <small class="file-note">PDF or ZIP file accepted</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cranePermit">Crane Permit</label>
+                    <input type="file" id="cranePermit" name="cranePermit" accept=".pdf">
+                    <small class="file-note">PDF document required</small>
+                    <div class="na-option">
+                        <input type="checkbox" id="cranePermitNa" name="cranePermitNa">
+                        <label for="cranePermitNa">N/A - No crane permit required</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="faaDetermination">FAA Determination Letter</label>
+                    <input type="file" id="faaDetermination" name="faaDetermination" accept=".pdf">
+                    <small class="file-note">PDF document required</small>
+                    <div class="na-option">
+                        <input type="checkbox" id="faaDeterminationNa" name="faaDeterminationNa">
+                        <label for="faaDeterminationNa">N/A - No FAA determination required</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="riggingPlan">Rigging Plan <span class="required">*</span></label>
+                    <input type="file" id="riggingPlan" name="riggingPlan" accept=".pdf" required>
+                    <small class="file-note">PDF document required</small>
+                </div>
             </div>
             
             <div class="btn-group">
-                <button type="submit" class="btn-submit" id="submitBtn" disabled>Submit (Upload all documents first)</button>
-                <button type="button" class="btn-clear" onclick="clearForm()">Clear</button>
+                <button type="submit" class="btn-submit" id="submitBtn" disabled>Submit NTP Request</button>
+                <button type="button" class="btn-clear" onclick="clearForm()">Clear Form</button>
             </div>
         </form>
         
         <div id="result" class="result">
-            <h3>Submitted Information:</h3>
-            <p><strong>Company:</strong> <span id="displayCompany"></span></p>
-            <p><strong>Contact:</strong> <span id="displayName"></span></p>
-            <p><strong>Phone:</strong> <span id="displayPhone"></span></p>
-            <p><strong>Email:</strong> <span id="displayEmail"></span></p>
-            <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
-            <h4 style="margin-bottom: 10px; color: #333;">Uploaded Files:</h4>
-            <p><strong>COI:</strong> <span id="displayCoi"></span></p>
-            <p><strong>RFDS:</strong> <span id="displayRfds"></span></p>
-            <p><strong>Colo Application:</strong> <span id="displayColo"></span></p>
+            <h3>NTP Request Submitted Successfully</h3>
+            <div id="resultContent"></div>
         </div>
     </div>
 
     <script>
-        // Function to check if all files are uploaded
-        function checkAllFilesUploaded() {
-            const coiFile = document.getElementById('coiUpload').files[0];
-            const rfdsFile = document.getElementById('rfdsUpload').files[0];
-            const coloFile = document.getElementById('coloUpload').files[0];
-            const submitBtn = document.getElementById('submitBtn');
+        // Show/hide project type sections
+        document.addEventListener('DOMContentLoaded', function() {
+            const projectTypeRadios = document.querySelectorAll('input[name="projectType"]');
+            const civilSection = document.getElementById('civilRequirements');
+            const towerSection = document.getElementById('towerRequirements');
             
-            if (coiFile && rfdsFile && coloFile) {
+            projectTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'civil') {
+                        civilSection.classList.add('active');
+                        towerSection.classList.remove('active');
+                        // Set tower fields as not required
+                        setRequiredFields('tower', false);
+                        setRequiredFields('civil', true);
+                    } else if (this.value === 'tower') {
+                        towerSection.classList.add('active');
+                        civilSection.classList.remove('active');
+                        // Set civil fields as not required
+                        setRequiredFields('civil', false);
+                        setRequiredFields('tower', true);
+                    }
+                    checkFormValidity();
+                });
+            });
+            
+            // Handle N/A checkboxes
+            setupNaCheckboxes();
+            
+            // Add change listeners to all form elements
+            addFormListeners();
+        });
+        
+        function setRequiredFields(type, required) {
+            const prefix = type === 'civil' ? 'civil' : 'tower';
+            const requiredFields = [
+                `${prefix}Drawings`,
+                `${prefix}Coi`,
+                `${prefix}GcCompany`,
+                `${prefix}GcFirstName`,
+                `${prefix}GcLastName`,
+                `${prefix}GcEmail`,
+                `${prefix}GcPhone`,
+                `${prefix}StartDate`,
+                `${prefix}EndDate`,
+                `${prefix}SafetyCerts`
+            ];
+            
+            if (type === 'tower') {
+                requiredFields.push('riggingPlan');
+            }
+            
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.required = required;
+                }
+            });
+        }
+        
+        function setupNaCheckboxes() {
+            const naCheckboxes = ['civilSlaNa', 'towerSlaNa', 'cranePermitNa', 'faaDeterminationNa'];
+            
+            naCheckboxes.forEach(checkboxId => {
+                const checkbox = document.getElementById(checkboxId);
+                const fileInputId = checkboxId.replace('Na', '');
+                const fileInput = document.getElementById(fileInputId);
+                
+                if (checkbox && fileInput) {
+                    checkbox.addEventListener('change', function() {
+                        if (this.checked) {
+                            fileInput.disabled = true;
+                            fileInput.value = '';
+                            fileInput.style.opacity = '0.5';
+                        } else {
+                            fileInput.disabled = false;
+                            fileInput.style.opacity = '1';
+                        }
+                        checkFormValidity();
+                    });
+                }
+            });
+        }
+        
+        function addFormListeners() {
+            const form = document.getElementById('ntpForm');
+            const inputs = form.querySelectorAll('input, select, textarea');
+            
+            inputs.forEach(input => {
+                input.addEventListener('change', checkFormValidity);
+                input.addEventListener('input', checkFormValidity);
+            });
+        }
+        
+        function checkFormValidity() {
+            const form = document.getElementById('ntpForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const projectType = document.querySelector('input[name="projectType"]:checked');
+            
+            if (!projectType) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submit NTP Request (Select project type)';
+                return;
+            }
+            
+            // Check if all required fields are filled
+            const requiredFields = form.querySelectorAll('input[required], select[required], textarea[required]');
+            let allValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim() || (field.type === 'file' && field.files.length === 0)) {
+                    allValid = false;
+                }
+            });
+            
+            if (allValid) {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit';
-                submitBtn.style.cursor = 'pointer';
+                submitBtn.textContent = 'Submit NTP Request';
             } else {
                 submitBtn.disabled = true;
-                submitBtn.textContent = 'Submit (Upload all documents first)';
-                submitBtn.style.cursor = 'not-allowed';
+                submitBtn.textContent = 'Submit NTP Request (Complete required fields)';
             }
         }
         
-        // Add event listeners to file inputs
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('coiUpload').addEventListener('change', checkAllFilesUploaded);
-            document.getElementById('rfdsUpload').addEventListener('change', checkAllFilesUploaded);
-            document.getElementById('coloUpload').addEventListener('change', checkAllFilesUploaded);
-            
-            // Initial check
-            checkAllFilesUploaded();
-        });
-
         // Handle form submission
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
+        document.getElementById('ntpForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Get form values
-            const companyName = document.getElementById('companyName').value;
-            const contactName = document.getElementById('contactName').value;
-            const contactPhone = document.getElementById('contactPhone').value;
-            const contactEmail = document.getElementById('contactEmail').value;
+            const formData = new FormData(this);
+            const result = document.getElementById('result');
+            const resultContent = document.getElementById('resultContent');
             
-            // Get file uploads
-            const coiFile = document.getElementById('coiUpload').files[0];
-            const rfdsFile = document.getElementById('rfdsUpload').files[0];
-            const coloFile = document.getElementById('coloUpload').files[0];
+            // Generate result summary
+            let resultHtml = '';
             
-            // Display the results
-            document.getElementById('displayCompany').textContent = companyName;
-            document.getElementById('displayName').textContent = contactName;
-            document.getElementById('displayPhone').textContent = contactPhone;
-            document.getElementById('displayEmail').textContent = contactEmail;
+            // Basic Information
+            resultHtml += '<div class="result-section">';
+            resultHtml += '<h4>Basic Information</h4>';
+            resultHtml += `<p><strong>Requestor:</strong> ${formData.get('firstName')} ${formData.get('lastName')}</p>`;
+            resultHtml += `<p><strong>Company:</strong> ${formData.get('company')}</p>`;
+            resultHtml += `<p><strong>Carrier:</strong> ${formData.get('carrier')}</p>`;
+            resultHtml += `<p><strong>Email:</strong> ${formData.get('email')}</p>`;
+            resultHtml += `<p><strong>Phone:</strong> ${formData.get('phone')}</p>`;
+            resultHtml += `<p><strong>Tillman Project #:</strong> ${formData.get('tillmanProject')}</p>`;
+            resultHtml += `<p><strong>TI-OPP # / Site Address:</strong> ${formData.get('siteInfo')}</p>`;
+            resultHtml += `<p><strong>Project Type:</strong> ${formData.get('projectType') === 'civil' ? 'Civil/Ground' : 'Tower'}</p>`;
+            resultHtml += '</div>';
             
-            // Display file information
-            document.getElementById('displayCoi').textContent = coiFile ? coiFile.name : 'No file selected';
-            document.getElementById('displayRfds').textContent = rfdsFile ? rfdsFile.name : 'No file selected';
-            document.getElementById('displayColo').textContent = coloFile ? coloFile.name : 'No file selected';
+            // Project-specific information
+            const projectType = formData.get('projectType');
+            const prefix = projectType === 'civil' ? 'civil' : 'tower';
             
-            // Show the result div
-            document.getElementById('result').style.display = 'block';
+            resultHtml += '<div class="result-section">';
+            resultHtml += `<h4>${projectType === 'civil' ? 'Civil/Ground' : 'Tower'} Requirements Status</h4>`;
+            resultHtml += '<p><strong>Uploaded Documents:</strong></p>';
             
-            // Optional: Log to console for debugging
-            console.log('Form submitted:', {
-                company: companyName,
-                name: contactName,
-                phone: contactPhone,
-                email: contactEmail,
-                files: {
-                    coi: coiFile ? coiFile.name : null,
-                    rfds: rfdsFile ? rfdsFile.name : null,
-                    colo: coloFile ? coloFile.name : null
+            // List uploaded files
+            const fileInputs = document.querySelectorAll(`#${prefix}Requirements input[type="file"]`);
+            fileInputs.forEach(input => {
+                if (input.files.length > 0) {
+                    const label = input.closest('.form-group').querySelector('label').textContent.replace(' *', '');
+                    resultHtml += `<p>• ${label}: ${input.files[0].name}</p>`;
                 }
             });
-        });
-        
-        // Clear form function
-        function clearForm() {
-            document.getElementById('contactForm').reset();
-            document.getElementById('result').style.display = 'none';
-            // Reset submit button state
-            checkAllFilesUploaded();
-        }
-        
-        // Add some interactive effects
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add focus effects to inputs
-            const inputs = document.querySelectorAll('input');
-            inputs.forEach(input => {
-                input.addEventListener('focus', function() {
-                    this.parentElement.style.transform = 'translateY(-2px)';
-                });
-                
-                input.addEventListener('blur', function() {
-                    this.parentElement.style.transform = 'translateY(0)';
-                });
+            
+            // Show N/A items
+            const naCheckboxes = document.querySelectorAll(`#${prefix}Requirements input[type="checkbox"]:checked`);
+            naCheckboxes.forEach(checkbox => {
+                const label = checkbox.closest('.na-option').querySelector('label').textContent;
+                resultHtml += `<p>• ${label}</p>`;
             });
+            
+            resultHtml += '</div>';
+            
+            // GC Information
+            resultHtml += '<div class="result-section">';
+            resultHtml += '<h4>General Contractor Information</h4>';
+            resultHtml += `<p><strong>Company:</strong> ${formData.get(`${prefix}GcCompany`)}</p>`;
+            resultHtml += `<p><strong>Contact:</strong> ${formData.get(`${prefix}GcFirstName`)} ${formData.get(`${prefix}GcLastName`)}</p>`;
+            resultHtml += `<p><strong>Email:</strong> ${formData.get(`${prefix}GcEmail`)}</p>`;
+            resultHtml += `<p><strong>Phone:</strong> ${formData.get(`${prefix}GcPhone`)}</p>`;
+            resultHtml += '</div>';
+            
+            // Construction Schedule
+            resultHtml += '<div class="result-section">';
+            resultHtml += '<h4>Construction Schedule</h4>';
+            resultHtml += `<p><strong>Start Date:</strong> ${formData.get(`${prefix}StartDate`)}</p>`;
+            resultHtml += `<p><strong>End Date:</strong> ${formData.get(`${prefix}EndDate`)}</p>`;
+            resultHtml += '</div>';
+            
+            resultContent.innerHTML = resultHtml;
+            result.style.display = 'block';
+            
+            // Scroll to result
+            result.scrollIntoView({ behavior: 'smooth' });
+            
+            console.log('NTP Form submitted:', Object.fromEntries(formData));
         });
+        
+        function clearForm() {
+            document.getElementById('ntpForm').reset();
+            document.getElementById('result').style.display = 'none';
+            document.querySelectorAll('.project-sections').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Re-enable all file inputs
+            document.querySelectorAll('input[type="file"]').forEach(input => {
+                input.disabled = false;
+                input.style.opacity = '1';
+            });
+            
+            checkFormValidity();
+        }
     </script>
 </body>
 </html>
